@@ -7,7 +7,7 @@ using namespace std;
 typedef long long ll;
 
 ll jie[25];
-int n, c[100];
+int n, c[100], b[25];
 
 void init()
 {
@@ -15,22 +15,12 @@ void init()
     for( int i = 1; i <= 20; i ++ ){
         jie[i] = jie[i-1]*1LL*i;
     }
+	memset( b, 0, sizeof(b) );
 }
-
-int b[25];
 
 int increasing_nxt_permutation( int *a )
 {
     int i, j;
-    int b[25];
-    /*get increasing mid number*/
-    for( i = 1; i <= n; i ++ ){
-        int cnt = 0;
-        for( j = i+1; j <= n; j ++ ){
-            if( a[j] < a[i] ) cnt ++;
-        }
-        b[ a[i] ] = cnt;
-    }
 
     /*plus 1*/
     b[2] ++;
@@ -70,15 +60,6 @@ int increasing_nxt_permutation( int *a )
 int decreasing_nxt_permutation( int *a )
 {
     int i, j;
-    int b[25];
-    /*get increasing mid number*/
-    for( i = 1; i <= n; i ++ ){
-        int cnt = 0;
-        for( j = i+1; j <= n; j ++ ){
-            if( a[j] < a[i] ) cnt ++;
-        }
-        b[ a[i] ] = cnt;
-    }
 
     /*plus 1*/
     b[n] ++;
