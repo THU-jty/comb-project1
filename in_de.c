@@ -6,8 +6,10 @@
 using namespace std;
 typedef long long ll;
 
-ll jie[25];
+ll jie[25], qe = 0;
 int n, c[100], b[25], vis[25], id[25];
+int tree[100];
+ll tag[100];
 
 void init()
 {
@@ -17,12 +19,47 @@ void init()
     }
     memset( b, 0, sizeof(b) );
     memset( vis, 0, sizeof(vis) );
+    memset( tag, 0, sizeof(tag) );
+    memset( tree, 0, sizeof(tree) );
+}
+
+void build( int L, int R, int x )
+{
+    if( L == R ){
+        tree[x] = 1;
+        return ;
+    }
+    int mid = (L+R)>>1;
+    build( L, mid, x<<1 );
+    build( mid+1, R, x<<1|1 );
+    tree[x] = tree[x<<1] + tree[x<<1|1];
+}
+
+int query( int val, int L, int R, int x )
+{
+    if( L == R )
+        return L;
+    int mid = (L+R)>>1;
+    if( tree[x<<1|1] >= val ) return query( val, mid+1, R, x<<1|1 );
+    else return query( val-tree[x<<1|1], L, mid, x<<1 );
+}
+
+void update( int pos, int L, int R, int x )
+{
+    if( L == R && pos == L ){
+        tree[x] = 0;
+        return ;
+    }
+    int mid = (L+R)>>1;
+    if( pos <= mid ) update( pos, L, mid, x<<1 );
+    else update( pos, mid+1, R, x<<1|1 );
+    tree[x] = tree[x<<1] + tree[x<<1|1];
 }
 
 int increasing_nxt_permutation( int *a )
 {
     int i, j;
-
+    qe ++;
     /*plus 1*/
     b[2] ++;
     for( i = 2; i <= n; i ++ ){
@@ -36,19 +73,12 @@ int increasing_nxt_permutation( int *a )
     for( i = 1; i <= n; i ++ ) a[i] = 0;
 
     /* transfer to permutation */
-    int tmp = 0, p = n;
+    //int tmp = 0, p = n;
+    build( 1, n, 1 );
     for( i = n; i >= 2; i -- ){
-        if( i == n || b[i] < b[i+1] ){
-            tmp = 0;
-            p = n;
-        }
-        while( 1 ){
-            if( a[p] == 0 ) tmp ++;
-            if( tmp == b[i]+1 ) break;
-            p --;
-        }
-        a[p] = i;
-        tmp --;
+        int tmp = query( b[i]+1, 1, n, 1 );
+        a[tmp] = i;
+        update( tmp, 1, n, 1 );
     }
     for( i = 1; i <= n; i ++ ){
         if( a[i] == 0 ){
@@ -63,7 +93,7 @@ int increasing_nxt_permutation( int *a )
 int decreasing_nxt_permutation( int *a )
 {
     int i, j;
-
+    ll mask = ( 1LL<<50 )-2;
     /*plus 1*/
     b[n] ++;
     for( i = n; i >= 2; i -- ){
@@ -89,6 +119,7 @@ int decreasing_nxt_permutation( int *a )
             p --;
         }
         a[p] = i;
+        //mask ^= ( 1<<p );
         tmp --;
     }
     for( i = 1; i <= n; i ++ ){
@@ -119,7 +150,7 @@ int main()
 {
     int i, j, x;
     ll cnt = 1;
-    printf("enter n and x:\n1 decreasing\n2 increasing\n3 recusive\n");
+    printf("enter n and x:\n0 decreasing\n1 increasing\n2 recusive\n");
     scanf("%d%d", &n, &x);
     init();
     for( i = 1; i <= n; i ++ ) c[i] = i;
