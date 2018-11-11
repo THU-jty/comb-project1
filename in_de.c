@@ -182,3 +182,22 @@ int main()
     t = GetTickCount();
     printf("%lld consume time %dms\n", cnt, t-s);
 }
+
+
+/* 找到了需要更新的节点位置 */
+if x为叶子节点 & x代表的点的下标 == pos
+	val[x] = 0
+	return
+/* 若更新点在当前区间的左子区间 */
+if pos 属于 l[x]
+	return update( pos, l[x] )
+/* 若更新点在当前区间的右子区间 */
+else
+	return update( pos, r[x] )
+/* 更新完单个节点后进行线段树的merge操作，递归更新所有之前访问的节点 */
+val[x] = val[ l[x] ] + val[ r[x] ]
+
+
+
+
+
